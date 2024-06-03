@@ -10,20 +10,24 @@
         font-family: 'Helvetica Neue', Arial, sans-serif;
         margin: 0;
         padding: 20px;
-        background: #f4f4f4;
-        color: #333;
+        background: #121212;
+        color: #e0e0e0;
     }
 
     .container {
         width: 90%;
         max-width: 1200px;
         margin: 20px auto;
+        background: #1e1e1e;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 
     h1 {
         margin-bottom: 20px;
         font-size: 24px;
-        color: #333;
+        color: #bb86fc;
         text-align: center;
     }
 
@@ -43,11 +47,11 @@
     }
 
     .total-count {
-        background: #28a745;
+        background: #03dac6;
     }
 
     .total-flyers-viewed {
-        background: #007bff;
+        background: #bb86fc;
     }
 
     table {
@@ -59,21 +63,22 @@
 
     th, td {
         padding: 12px;
-        border: 1px solid #ddd;
+        border: 1px solid #333;
         text-align: left;
     }
 
     th {
         background-color: #333;
-        color: #fff;
+        color: #bb86fc;
     }
 
     td {
-        background-color: #fff;
+        background-color: #1e1e1e;
+        color: #e0e0e0;
     }
 
     tr:hover td {
-        background-color: #f1f1f1;
+        background-color: #333;
     }
 </style>
 </head>
@@ -141,7 +146,7 @@
             cell2.textContent = entry.code;
             cell3.textContent = new Date(entry.dateTime).toLocaleString();
 
-            cell1.style.color = "#00cc66";
+            cell1.style.color = "#03dac6";
         });
 
         totalCountElement.textContent = "Total Promo Codes Used: " + promoCodes.length;
@@ -156,5 +161,3 @@
 
 </body>
 </html>
-
-
