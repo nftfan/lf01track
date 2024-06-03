@@ -82,7 +82,7 @@
 <div class="container">
     <h1>Real Time Campaign Tracking</h1>
     <div class="stats">
-        <div id="totalCount" class="tab total-count">Total Promo Codes Used: 26</div>
+        <div id="totalCount" class="tab total-count">Total Promo Codes Used: 0</div>
         <div id="totalFlyersViewed" class="tab total-flyers-viewed">Total Flyers Viewed: 2000</div>
     </div>
     <table>
@@ -107,6 +107,7 @@
 
     var dynamodb = new AWS.DynamoDB.DocumentClient();
     var tableName = 'lf01';
+    var totalFlyersViewed = 2000; // Example count for total flyers viewed
 
     function loadPromoCodes() {
         var params = {
@@ -127,6 +128,7 @@
     function displayPromoCodes(promoCodes) {
         var tableBody = document.getElementById("promoTable");
         var totalCountElement = document.getElementById("totalCount");
+        var totalFlyersViewedElement = document.getElementById("totalFlyersViewed");
         tableBody.innerHTML = "";
 
         promoCodes.forEach(function(entry) {
@@ -143,6 +145,7 @@
         });
 
         totalCountElement.textContent = "Total Promo Codes Used: " + promoCodes.length;
+        totalFlyersViewedElement.textContent = "Total Flyers Viewed: " + totalFlyersViewed;
     }
 
     window.onload = function() {
@@ -153,4 +156,5 @@
 
 </body>
 </html>
+
 
