@@ -48,6 +48,25 @@
         margin: 0 10px;
     }
 
+    .progress-container {
+        width: 100%;
+        background-color: #333;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    .progress-bar {
+        height: 24px;
+        width: 20%;
+        background-color: #03dac6;
+        text-align: center;
+        line-height: 24px;
+        color: #121212;
+        font-weight: bold;
+    }
+
     .stats {
         display: flex;
         justify-content: center;
@@ -113,9 +132,12 @@
             <p style="text-align: center;">Back</p>
         </div>
     </div>
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar">People Reached: 0/10000</div>
+    </div>
     <div class="stats">
         <div id="totalCount" class="tab total-count">Total Promo Codes Used: 0</div>
-        <div id="totalFlyersViewed" class="tab total-flyers-viewed">Total Flyers Viewed: 2000</div>
+        <div id="totalFlyersViewed" class="tab total-flyers-viewed">Total Flyers Viewed: <span id="flyersViewed">0</span>/10000</div>
     </div>
     <table>
         <thead>
@@ -139,7 +161,7 @@
 
     var dynamodb = new AWS.DynamoDB.DocumentClient();
     var tableName = 'lf01';
-    var totalFlyersViewed = 2000; // Example count for total flyers viewed
+    var totalFlyersViewed = 3000; // Example count for total flyers viewed
 
     function loadPromoCodes() {
         var params = {
@@ -160,7 +182,8 @@
     function displayPromoCodes(promoCodes) {
         var tableBody = document.getElementById("promoTable");
         var totalCountElement = document.getElementById("totalCount");
-        var totalFlyersViewedElement = document.getElementById("totalFlyersViewed");
+        var totalFlyersViewedElement = document.getElementById("flyersViewed");
+        var progressBar = document.getElementById("progressBar");
         tableBody.innerHTML = "";
 
         promoCodes.forEach(function(entry) {
@@ -177,7 +200,11 @@
         });
 
         totalCountElement.textContent = "Total Promo Codes Used: " + promoCodes.length;
-        totalFlyersViewedElement.textContent = "Total Flyers Viewed: " + totalFlyersViewed;
+        totalFlyersViewedElement.textContent = totalFlyersViewed;
+        var flyersViewed = totalFlyersViewed;
+        var progressPercentage = (flyersViewed / 10000) * 100;
+        progressBar.style.width = progressPercentage + "%";
+        progressBar.textContent = "People Reached: " + flyersViewed + "/10000";
     }
 
     window.onload = function() {
