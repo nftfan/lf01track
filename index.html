@@ -9,47 +9,57 @@
     body {
         font-family: 'Helvetica Neue', Arial, sans-serif;
         margin: 0;
-        padding: 0;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: #121212;
-        color: #fff;
+        padding: 20px;
+        background: #f4f4f4;
+        color: #333;
     }
 
     .container {
         width: 90%;
-        max-width: 1000px;
+        max-width: 1200px;
         margin: 20px auto;
-        text-align: center;
     }
 
     h1 {
-        margin-bottom: 10px;
-        font-size: 28px;
-        color: #00cc66;
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #333;
+        text-align: center;
+    }
+
+    .stats {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .tab {
+        margin: 0 10px;
+        padding: 15px 20px;
+        border-radius: 8px;
+        color: #fff;
+        font-size: 20px;
+        font-weight: bold;
     }
 
     .total-count {
-        margin-bottom: 20px;
-        font-size: 24px;
-        color: #ffcc00;
-        background: #333;
-        padding: 10px;
-        border-radius: 8px;
-        display: inline-block;
+        background: #28a745;
+    }
+
+    .total-flyers-viewed {
+        background: #007bff;
     }
 
     table {
         width: 100%;
         border-collapse: collapse;
         margin-top: 20px;
+        font-size: 14px;
     }
 
     th, td {
         padding: 12px;
-        border: 1px solid #333;
+        border: 1px solid #ddd;
         text-align: left;
     }
 
@@ -59,11 +69,11 @@
     }
 
     td {
-        background-color: #222;
+        background-color: #fff;
     }
 
     tr:hover td {
-        background-color: #444;
+        background-color: #f1f1f1;
     }
 </style>
 </head>
@@ -71,7 +81,10 @@
 
 <div class="container">
     <h1>Real Time Campaign Tracking</h1>
-    <div id="totalCount" class="total-count">Total Promo Codes Used: 0</div>
+    <div class="stats">
+        <div id="totalCount" class="tab total-count">Total Promo Codes Used: 26</div>
+        <div id="totalFlyersViewed" class="tab total-flyers-viewed">Total Flyers Viewed: 2000</div>
+    </div>
     <table>
         <thead>
             <tr>
@@ -98,15 +111,15 @@
     function loadPromoCodes() {
         var params = {
             TableName: tableName,
-            Limit: 10000, // Limit the number of entries fetched for display
-            ScanIndexForward: false // Display the most recent entries first
+            Limit: 10000,
+            ScanIndexForward: false
         };
 
         dynamodb.scan(params, function(err, data) {
             if (err) {
                 alert("Error loading promo codes from DynamoDB: " + err.message);
             } else {
-                displayPromoCodes(data.Items);
+                displayPromoCodes(data.Items.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime)));
             }
         });
     }
@@ -114,7 +127,7 @@
     function displayPromoCodes(promoCodes) {
         var tableBody = document.getElementById("promoTable");
         var totalCountElement = document.getElementById("totalCount");
-        tableBody.innerHTML = ""; // Clear previous entries
+        tableBody.innerHTML = "";
 
         promoCodes.forEach(function(entry) {
             var newRow = tableBody.insertRow();
@@ -126,20 +139,18 @@
             cell2.textContent = entry.code;
             cell3.textContent = new Date(entry.dateTime).toLocaleString();
 
-            cell1.style.color = "lightgreen"; // Highlight the message
+            cell1.style.color = "#00cc66";
         });
 
-        // Update the total count
         totalCountElement.textContent = "Total Promo Codes Used: " + promoCodes.length;
     }
 
-    // Load promo codes when the page loads
     window.onload = function() {
         loadPromoCodes();
-        // Refresh every 30 seconds
         setInterval(loadPromoCodes, 30000);
     };
 </script>
 
 </body>
 </html>
+
