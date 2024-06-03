@@ -27,8 +27,25 @@
     h1 {
         margin-bottom: 20px;
         font-size: 24px;
-        color: #bb86fc;
+        color: #ffffff;
         text-align: center;
+        background: #458bff;
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    .image-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .image-container img {
+        width: 100%;
+        max-width: 300px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        margin: 0 10px;
     }
 
     .stats {
@@ -86,6 +103,16 @@
 
 <div class="container">
     <h1>Real Time Campaign Tracking</h1>
+    <div class="image-container">
+        <div>
+            <img src="https://bafybeidyuqef5sjbfshvxvahxafighvnhb3vwyioj3kyhd2dvydpooqcg4.ipfs.nftstorage.link/" alt="Front Image">
+            <p style="text-align: center;">Front</p>
+        </div>
+        <div>
+            <img src="https://bafybeidyuqef5sjbfshvxvahxafighvnhb3vwyioj3kyhd2dvydpooqcg4.ipfs.nftstorage.link/" alt="Back Image">
+            <p style="text-align: center;">Back</p>
+        </div>
+    </div>
     <div class="stats">
         <div id="totalCount" class="tab total-count">Total Promo Codes Used: 0</div>
         <div id="totalFlyersViewed" class="tab total-flyers-viewed">Total Flyers Viewed: 2000</div>
