@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Real Time Campaign Tracking</title>
 <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1002.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
     body {
         font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -46,6 +47,16 @@
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         margin: 0 10px;
+    }
+
+    .charts-container {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 20px;
+    }
+
+    .chart {
+        width: 45%;
     }
 
     .progress-container {
@@ -90,6 +101,14 @@
         background: #bb86fc;
     }
 
+    .conversion-rate {
+        background: #ff4081;
+    }
+
+    .acquisition-cost {
+        background: #f67b27;
+    }
+
     table {
         width: 100%;
         border-collapse: collapse;
@@ -116,6 +135,11 @@
     tr:hover td {
         background-color: #333;
     }
+
+    #chart-container {
+        display: flex;
+        justify-content: space-between;
+    }
 </style>
 </head>
 <body>
@@ -132,12 +156,22 @@
             <p style="text-align: center;">Back</p>
         </div>
     </div>
+    <div id="chart-container">
+        <div class="chart">
+            <canvas id="promoChart"></canvas>
+        </div>
+        <div class="chart">
+            <canvas id="datePromoChart"></canvas>
+        </div>
+    </div>
     <div class="progress-container">
         <div class="progress-bar" id="progressBar">People Reached: 0/10000</div>
     </div>
     <div class="stats">
         <div id="totalCount" class="tab total-count">Total Promo Codes Used: 0</div>
         <div id="totalFlyersViewed" class="tab total-flyers-viewed">Total Flyers Viewed: <span id="flyersViewed">0</span>/10000</div>
+        <div id="conversionRate" class="tab conversion-rate">Conversion Rate: 0%</div>
+        <div id="acquisitionCost" class="tab acquisition-cost">Acquisition Cost: €0.00</div>
     </div>
     <table>
         <thead>
@@ -183,6 +217,8 @@
         var tableBody = document.getElementById("promoTable");
         var totalCountElement = document.getElementById("totalCount");
         var totalFlyersViewedElement = document.getElementById("flyersViewed");
+        var conversionRateElement = document.getElementById("conversionRate");
+        var acquisitionCostElement = document.getElementById("acquisitionCost");
         var progressBar = document.getElementById("progressBar");
         tableBody.innerHTML = "";
 
@@ -205,6 +241,101 @@
         var progressPercentage = (flyersViewed / 10000) * 100;
         progressBar.style.width = progressPercentage + "%";
         progressBar.textContent = "People Reached: " + flyersViewed + "/10000";
+        
+        var conversionRate = ((promoCodes.length / flyersViewed) * 100).toFixed(2);
+        conversionRateElement.textContent = "Conversion Rate: " + conversionRate + "%";
+
+        var acquisitionCost = (1250 / promoCodes.length).toFixed(2);
+        acquisitionCostElement.textContent = "Acquisition Cost: €" + acquisitionCost;
+
+        updateChart(promoCodes.length, flyersViewed);
+        updateDatePromoChart(promoCodes);
+    }
+
+    function updateChart(promoCodesUsed, flyersViewed) {
+        var ctx = document.getElementById('promoChart').getContext('2d');
+        var promoChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Flyers Distributed', 'Promo Codes Entered'],
+                datasets: [{
+                    label: 'Count',
+                    data: [flyersViewed, promoCodesUsed],
+                    backgroundColor: ['#bb86fc', '#03dac6']
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function updateDatePromoChart(promoCodes) {
+        var ctx = document.getElementById('datePromoChart').getContext('2d');
+        var dates = promoCodes.map(function(entry) {
+            return new Date(entry.dateTime).toLocaleDateString();
+        });
+
+        var dateCounts = dates.reduce(function(acc, date) {
+            acc[date] = (acc[date] || 0) + 1;
+            return acc;
+        }, {});
+
+        var sortedDates = Object.keys(dateCounts).sort(function(a, b) {
+            return new Date(a) - new Date(b);
+        });
+
+        var promoChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: sortedDates,
+                datasets: [{
+                    label: 'Promo Codes Entered',
+                    data: sortedDates.map(function(date) {
+                        return dateCounts[date];
+                    }),
+                    backgroundColor: '#ff4081',
+                    borderColor: '#ff4081',
+                    fill: false,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     window.onload = function() {
@@ -215,4 +346,3 @@
 
 </body>
 </html>
-
